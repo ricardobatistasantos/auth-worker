@@ -1,0 +1,25 @@
+import { Injectable } from "@nestjs/common";
+import { JwtService } from "@helpers/jwt.service";
+import { BcryptService } from "@helpers/bcrypt.service";
+import { UserRepository } from "@infra/repositories/user.repository";
+
+@Injectable()
+export class LoginUseCase {
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly jwtService: JwtService,
+    private readonly bcryptService: BcryptService,
+  ) { }
+
+  async execute(email: string, password: string) {
+    const user = await this.userRepository.findByEmail(email);
+    if (!user || !(await this.bcryptService.compare(password, user.password))) {
+      throw new Error('Invalid credentials');
+    }
+
+    const roles = await this.userRepository.rolesByUser(user.id);
+
+    const token = this.jwtService.generateToken({ user: { ...user, roles } });
+    return { accessToken: token, user: { ...user, roles } }
+  };
+}
