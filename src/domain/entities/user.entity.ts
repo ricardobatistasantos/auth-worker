@@ -1,4 +1,4 @@
-import { Role } from "./role.entity";
+import { Module } from "./module.entity";
 
 export class User {
 
@@ -10,7 +10,7 @@ export class User {
 
   password?: string;
 
-  roles?: Role;
+  modules?: Module[];
 
   createdAt?: Date;
 
@@ -21,7 +21,7 @@ export class User {
     this.name = input.name;
     this.email = input.email;
     this.password = input.password;
-    this.roles = input.roles;
+    this.modules = input.modules;
     this.createdAt = input.createdAt;
     this.updateAt = input.updateAt;
   }

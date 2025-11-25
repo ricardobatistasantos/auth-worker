@@ -17,9 +17,8 @@ export class LoginUseCase {
       throw new Error('Invalid credentials');
     }
 
-    const roles = await this.userRepository.rolesByUser(user.id);
-
-    const token = this.jwtService.generateToken({ user: { ...user, roles } });
-    return { accessToken: token, user: { ...user, roles } }
+    // const roles = await this.userRepository.rolesByUser(user.id);
+    const token = this.jwtService.generateToken({ user: { ...user } });
+    return { accessToken: token, user: { ...user } }
   };
 }

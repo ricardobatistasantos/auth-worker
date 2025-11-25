@@ -27,6 +27,7 @@
     "@nestjs/graphql": "^13.0.3",
     "@nestjs/platform-express": "^10.0.0",
     "bcrypt": "^5.1.1",
+    "dotenv": "^17.2.3",
     "express-graphql": "^0.12.0",
     "graphql": "^16.10.0",
     "jsonwebtoken": "^9.0.2",

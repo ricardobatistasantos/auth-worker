@@ -11,7 +11,7 @@ const replics = {
   master: {
     host: process.env.HOST_DATABASE,
     port: Number(process.env.PORT_DATABASE),
-    database: process.env.DB,
+    database: process.env.POSTGRES_DB,
     user: process.env.USER_DATABASE,
     password: process.env.PASSWORD_DATABASE,
   },

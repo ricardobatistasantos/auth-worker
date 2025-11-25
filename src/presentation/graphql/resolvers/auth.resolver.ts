@@ -15,8 +15,8 @@ export class AuthResolver {
 
   @Mutation(() => User)
   async register(@Args('input') input: CreateUserInput) {
-    const { name, email, password, roleId } = input;
-    return this.registerUseCase.execute(email, name, password, roleId);
+    const { name, email, password } = input;
+    return this.registerUseCase.execute(email, name, password);
   }
 
   @Mutation(() => ResponseAuth)
