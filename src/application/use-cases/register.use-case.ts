@@ -11,19 +11,10 @@ export class RegisterUseCase {
     private readonly bcryptService: BcryptService
   ) { }
 
-  async execute(email: string, name: string, password: string) {
-    const existingUser = await this.userRepository.findByEmail(email);
-    if (existingUser) {
-      throw new Error('User already exists with this email');
-    }
-
+  async execute(name: string, email: string, profileId: string, password: string) {
     const hashedPassword = await this.bcryptService.hash(password);
-    const newUser = new User({ email, name, password: hashedPassword });
-
+    const newUser = new User({ name, email, profileId, password: hashedPassword });
     const user = await this.userRepository.create(newUser);
-
-    await this.userRepository.createRelationsUserRoles(user.id);
-
     return { ...user }
   }
 }

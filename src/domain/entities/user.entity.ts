@@ -1,5 +1,3 @@
-import { Module } from "./module.entity";
-
 export class User {
 
   id?: string;
@@ -10,7 +8,7 @@ export class User {
 
   password?: string;
 
-  modules?: Module[];
+  profileId?: string;
 
   createdAt?: Date;
 
@@ -21,7 +19,7 @@ export class User {
     this.name = input.name;
     this.email = input.email;
     this.password = input.password;
-    this.modules = input.modules;
+    this.profileId = input.profileId;
     this.createdAt = input.createdAt;
     this.updateAt = input.updateAt;
   }

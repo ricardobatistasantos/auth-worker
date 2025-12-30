@@ -9,10 +9,12 @@ import { JwtService } from '@helpers/jwt.service';
 import { BcryptService } from '@helpers/bcrypt.service';
 import { LoginUseCase } from '@application/use-cases/login.use-case';
 import { join } from 'path';
+import { PermissionRepository } from '@infra/repositories/permission.repository';
+import { MeUseCase } from '@application/use-cases/me.use-case';
 
 const resolvers = [AuthResolver,];
-const userCases = [LoginUseCase, RegisterUseCase,];
-const repositories = [UserRepository,];
+const userCases = [LoginUseCase, RegisterUseCase, MeUseCase,];
+const repositories = [UserRepository,PermissionRepository];
 const services = [JwtService, BcryptService,];
 
 @Module({
@@ -20,7 +22,10 @@ const services = [JwtService, BcryptService,];
     DatabaseModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: join(__dirname, 'graphql', 'schemas', 'schemas.graphql'),
+      autoSchemaFile: join(
+        process.cwd(),
+        'src/presentation/graphql/schemas/schemas.graphql'
+      ),
       playground: true,
     }),
   ],

@@ -1,0 +1,51 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  id: String!
+  name: String!
+  email: String!
+  profileId: String!
+  createdAt: String!
+}
+
+type AuthDto {
+  accessToken: String!
+  user: User!
+}
+
+type ProfileDto {
+  code: String!
+  name: String!
+}
+
+type ModulePermissionDto {
+  module: String!
+  moduleName: String!
+  totalAccess: Boolean!
+  actions: [String!]
+}
+
+type MeDto {
+  name: String!
+  email: String!
+  profile: ProfileDto!
+  permissions: [ModulePermissionDto!]!
+}
+
+type Query {
+  me: MeDto!
+}
+
+type Mutation {
+  register(input: CreateUserDto!): User!
+  login(email: String!, password: String!): AuthDto!
+}
+
+input CreateUserDto {
+  name: String!
+  email: String!
+  profileId: String!
+  password: String!
+}
