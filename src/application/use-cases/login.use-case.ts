@@ -8,7 +8,7 @@ import { PermissionRepository } from "@infra/repositories/permission.repository"
 export class LoginUseCase {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly profileRepository: PermissionRepository,
+    private readonly permissionRepository: PermissionRepository,
     private readonly jwtService: JwtService,
     private readonly bcryptService: BcryptService,
   ) { }
@@ -22,7 +22,11 @@ export class LoginUseCase {
     if (!user.profileId)
       throw new Error('User profile is not set');
 
+    const permissions
+      = await this.permissionRepository.permissionsByProfile(user.profileId)
+      
     const token = this.jwtService.generateToken({ user: { ...user } });
-    return { accessToken: token, user: { ...user } }
+    
+    return { accessToken: token, user: { ...user, ...{ permissions } } }
   };
 }
