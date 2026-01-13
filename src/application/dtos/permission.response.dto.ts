@@ -1,14 +1,5 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-
-@ObjectType()
-export class ProfileDto {
-
-  @Field()
-  code: string;
-
-  @Field()
-  name: string;
-}
+import { ProfileDto } from "./profile.dto";
 
 @ObjectType()
 export class ModulePermissionDto {
@@ -27,7 +18,7 @@ export class ModulePermissionDto {
 }
 
 @ObjectType()
-export class MeDto {
+export class PermissionDto {
 
   @Field()
   name: string;

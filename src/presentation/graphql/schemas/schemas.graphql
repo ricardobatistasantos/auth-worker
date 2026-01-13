@@ -2,22 +2,20 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type ProfileDto {
+  code: String!
+  name: String!
+}
+
 type User {
-  id: String!
   name: String!
   email: String!
-  profileId: String!
-  createdAt: String!
+  profile: ProfileDto!
 }
 
 type AuthDto {
   accessToken: String!
   user: User!
-}
-
-type ProfileDto {
-  code: String!
-  name: String!
 }
 
 type ModulePermissionDto {
@@ -27,7 +25,7 @@ type ModulePermissionDto {
   actions: [String!]
 }
 
-type MeDto {
+type PermissionDto {
   name: String!
   email: String!
   profile: ProfileDto!
@@ -35,7 +33,7 @@ type MeDto {
 }
 
 type Query {
-  me: MeDto!
+  me: PermissionDto!
 }
 
 type Mutation {

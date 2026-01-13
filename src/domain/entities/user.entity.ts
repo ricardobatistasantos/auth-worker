@@ -1,6 +1,7 @@
-export class User {
+import { Entity } from "./entity.base";
+import { Profile } from "./profile.entity";
 
-  id?: string;
+export class User extends Entity {
 
   name: string;
 
@@ -8,19 +9,20 @@ export class User {
 
   password?: string;
 
-  profileId?: string;
-
-  createdAt?: Date;
-
-  updateAt?: Date;
+  profile?: Profile;
 
   constructor(input: Partial<User>) {
-    this.id = input.id;
+
+    super(input);
+
     this.name = input.name;
     this.email = input.email;
     this.password = input.password;
-    this.profileId = input.profileId;
-    this.createdAt = input.createdAt;
-    this.updateAt = input.updateAt;
+    this.profile = new Profile({
+      id: input.profile?.id,
+      code: input.profile.code,
+      name: input.profile.name,
+      description: input.profile.description,
+    });
   }
 }

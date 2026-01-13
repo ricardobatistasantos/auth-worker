@@ -1,9 +1,8 @@
-import { ObjectType, Field} from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
+import { ProfileDto } from './profile.dto';
 
 @ObjectType()
 export class User {
-  @Field()
-  id?: string;
 
   @Field()
   name: string;
@@ -12,8 +11,5 @@ export class User {
   email: string;
 
   @Field()
-  profileId: string;
-
-  @Field()
-  createdAt: string
+  profile: ProfileDto;
 }

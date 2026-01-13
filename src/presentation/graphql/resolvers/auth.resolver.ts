@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { Req, UseGuards } from '@nestjs/common';
 import { Resolver, Mutation, Args, Query, Context } from '@nestjs/graphql';
 import { CreateUserDto } from '@application/dtos/create-user.request.dto';
 import { RegisterUseCase } from '@application/use-cases/register.use-case';
@@ -7,10 +7,10 @@ import { LoginUseCase } from '@application/use-cases/login.use-case';
 import { AuthDto } from '@application/dtos/auth.response.dto';
 import { validateDto } from '@helpers/validate-dto';
 import { User } from '@application/dtos/user-dto';
-import { MeDto } from '@application/dtos/me.response.dto';
+import { PermissionDto } from '@application/dtos/permission.response.dto';
 import { MeUseCase } from '@application/use-cases/me.use-case';
 
-@Resolver(() => User)
+@Resolver()
 export class AuthResolver {
 
   constructor(
@@ -39,12 +39,12 @@ export class AuthResolver {
     return this.loginUseCase.execute(email, password);
   }
 
-  @Query(() => MeDto)
+  @Query(() => PermissionDto)
   @UseGuards(JwtAuthGuard)
   async me(@Context() context: any) {
-    const { id: userId } = context.req.user;
+    const { userId, profileId } = context.req.user;
 
-    return this.meUseCase.execute(userId);
+    return this.meUseCase.execute(userId, profileId);
   }
 
 }

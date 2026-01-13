@@ -13,7 +13,7 @@ export class RegisterUseCase {
 
   async execute(name: string, email: string, profileId: string, password: string) {
     const hashedPassword = await this.bcryptService.hash(password);
-    const newUser = new User({ name, email, profileId, password: hashedPassword });
+    const newUser = new User({ name, email, profile: { id: profileId }, password: hashedPassword });
     const user = await this.userRepository.create(newUser);
     return { ...user }
   }
