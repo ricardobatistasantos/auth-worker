@@ -4,8 +4,8 @@ import { Inject, Injectable } from '@nestjs/common';
 export class PermissionRepository {
 
   constructor(@Inject('DATABASE_CONNECTION') private readonly connection) { }
-  
-  async permissionsByProfile(id: string) {
+
+  async permissionsByProfile(userId: string, profileId: string) {
     const row = await this.connection().manyOrNone(`
       with profile_base as (
       select
@@ -77,13 +77,12 @@ export class PermissionRepository {
                 pm.module_name,
                 pm.total_access
                 order by
-                pm.module_code;`, [id]);
-                console.log(row)
-                return row.map(r => ({
-                  module: r.module_code,
-                  moduleName: r.module_name,
-                  totalAccess: r.total_access,
-                  actions: r.actions.map(a => a.code),
-                }));
-              }
+                pm.module_code;`, [profileId]);
+    return row.map(r => ({
+      module: r.module_code,
+      moduleName: r.module_name,
+      totalAccess: r.total_access,
+      actions: r.actions.map(a => a.code),
+    }));
+  }
 }

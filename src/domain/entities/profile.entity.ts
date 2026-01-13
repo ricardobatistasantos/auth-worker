@@ -1,22 +1,16 @@
 export class Profile {
-  id: string
+  id?: string;
 
-  code: string
+  code?: string
 
-  name: string
+  name?: string
 
-  description: string
-
-  createdAt?: Date;
-
-  updateAt?: Date;
+  description?: string
 
   constructor(input: Partial<Profile>) {
     this.id = input.id;
     this.name = input.name;
     this.code = input.code;
     this.description = input.description;
-    this.createdAt = input.createdAt;
-    this.updateAt = input.updateAt;
   }
 }

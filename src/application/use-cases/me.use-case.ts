@@ -9,12 +9,12 @@ export class MeUseCase {
     private readonly permissionRepository: PermissionRepository,
   ) { }
 
-  async execute(userId: string) {
+  async execute(userId: string, profileId: string) {
     const user = await this.userRepository.findById(userId);
     if (!user) throw new Error('User not found');
 
     const permissions =
-      await this.permissionRepository.permissionsByProfile(user.profileId);
+      await this.permissionRepository.permissionsByProfile(userId, profileId);
     
       return {
       name: user.name,
