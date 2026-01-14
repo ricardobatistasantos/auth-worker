@@ -46,7 +46,7 @@ export class UserRepository {
     }) : null;
   }
 
-  async findById(userId: string): Promise<{
+  async findById(userId: string, profileId: string): Promise<{
     name: string,
     email: string,
     profileId: string,
@@ -65,9 +65,10 @@ export class UserRepository {
       FROM users u
       JOIN profile p ON p.id = u.profile_id
       WHERE u.id = $1
+        AND p.id = $2
         AND u.is_active = true
       `,
-      [userId],
+      [userId, profileId],
     );
 
     if (!row) return null;
@@ -82,23 +83,5 @@ export class UserRepository {
       },
     };
   }
-
-  async create(user: User): Promise<User> {
-    const created = await this.connection().oneOrNone(
-      'INSERT INTO users ("name", email, profile_id, "password") VALUES ($1, $2, $3, $4) RETURNING *',
-      [
-        user.name,
-        user.email,
-        user.profile.id,
-        user.password
-      ]
-    );
-    return new User({
-      ...created,
-      profileId: created.profile_id,
-      createdAt: created.created_at
-    });
-  }
-
 
 }

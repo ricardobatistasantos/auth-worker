@@ -1,32 +1,18 @@
-import { Req, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Resolver, Mutation, Args, Query, Context } from '@nestjs/graphql';
-import { CreateUserDto } from '@application/dtos/create-user.request.dto';
-import { RegisterUseCase } from '@application/use-cases/register.use-case';
 import { JwtAuthGuard } from '@presentation/shared/guards/jwt-auth-guard';
 import { LoginUseCase } from '@application/use-cases/login.use-case';
 import { AuthDto } from '@application/dtos/auth.response.dto';
-import { validateDto } from '@helpers/validate-dto';
-import { User } from '@application/dtos/user-dto';
 import { PermissionDto } from '@application/dtos/permission.response.dto';
-import { MeUseCase } from '@application/use-cases/me.use-case';
+import { PermissionUseCase } from '@application/use-cases/permission.use-case';
 
 @Resolver()
 export class AuthResolver {
 
   constructor(
     private readonly loginUseCase: LoginUseCase,
-    private readonly registerUseCase: RegisterUseCase,
-    private readonly meUseCase: MeUseCase,
+    private readonly permission: PermissionUseCase,
   ) { }
-
-  @Mutation(() => User)
-  async register(@Args('input') input: CreateUserDto) {
-
-    await validateDto(CreateUserDto, input);
-
-    const { name, email, profileId, password, } = input;
-    return this.registerUseCase.execute(name, email, profileId, password);
-  }
 
   @Mutation(() => AuthDto)
   async login(
@@ -35,16 +21,14 @@ export class AuthResolver {
   ) {
     if (!email || !password)
       throw new Error('Email and password are required');
-
     return this.loginUseCase.execute(email, password);
   }
 
-  @Query(() => PermissionDto)
+  @Query(() => [PermissionDto])
   @UseGuards(JwtAuthGuard)
-  async me(@Context() context: any) {
+  async myPermissions(@Context() context: any) {
     const { userId, profileId } = context.req.user;
-
-    return this.meUseCase.execute(userId, profileId);
+    return this.permission.execute(userId, profileId);
   }
 
 }

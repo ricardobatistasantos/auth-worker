@@ -3,27 +3,15 @@ import { PermissionRepository } from "@infra/repositories/permission.repository"
 import { UserRepository } from "@infra/repositories/user.repository";
 
 @Injectable()
-export class MeUseCase {
+export class PermissionUseCase {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly permissionRepository: PermissionRepository,
   ) { }
 
   async execute(userId: string, profileId: string) {
-    const user = await this.userRepository.findById(userId);
+    const user = await this.userRepository.findById(userId, profileId);
     if (!user) throw new Error('User not found');
-
-    const permissions =
-      await this.permissionRepository.permissionsByProfile(userId, profileId);
-    
-      return {
-      name: user.name,
-      email: user.email,
-      profile: {
-        code: user.profile.code,
-        name: user.profile.name,
-      },
-      permissions,
-    };
+    return await this.permissionRepository.getPermissions(userId, profileId);
   }
 }
