@@ -11,7 +11,7 @@ export class AuthResolver {
 
   constructor(
     private readonly loginUseCase: LoginUseCase,
-    private readonly permission: PermissionUseCase,
+    private readonly permissionUseCase: PermissionUseCase,
   ) { }
 
   @Mutation(() => AuthDto)
@@ -28,7 +28,7 @@ export class AuthResolver {
   @UseGuards(JwtAuthGuard)
   async myPermissions(@Context() context: any) {
     const { userId, profileId } = context.req.user;
-    return this.permission.execute(userId, profileId);
+    return this.permissionUseCase.execute(userId, profileId);
   }
 
 }

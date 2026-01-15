@@ -7,78 +7,74 @@ export class PermissionRepository {
 
   async getPermissions(userId: string, profileId: string) {
     const row = await this.connection().manyOrNone(`
-      with profile_base as (
+      with selected_user_profile as (
       select
+        up.id as user_profile_id,
+        up.user_id,
         p.id as profile_id,
         p.code as profile_code,
         p.name as profile_name
-      from profile p
-      join users u
-        on u.profile_id = p.id
-      where
-        u.id = $1
-        and p.id = $2
-    ),
-    profile_modules_cte as (
+      from
+        user_profiles up
+      join profile p on p.id = up.profile_id
+      where up.user_id = $1 and p.id = $2
+      ),
+      user_modules_cte as (
       select
-        pb.profile_id,
-        pb.profile_code,
-        pb.profile_name,
-        m.id as module_id,
+        sup.profile_code,
+        sup.profile_name,
+        upm.id as user_profile_module_id,
+        upm.module_id,
         m.code as module_code,
-        m.name as module_name,
-        pm.total_access,
-        pm.id as profile_module_id
-      from profile_base pb
-      join profile_modules pm
-        on pm.profile_id = pb.profile_id
-      join modules m
-        on m.id = pm.module_id
-    ),
-    profile_module_actions_cte as (
+        m.name as module_name
+      from
+        user_profile_modules upm
+      join selected_user_profile sup on sup.user_profile_id = upm.user_profile_id
+      join modules m on m.id = upm.module_id
+      ),
+      user_permissions_cte as (
       select
-        pm.profile_code,
-        pm.module_code,
+        up.module_id,
+        a.id as action_id,
         a.code as action_code,
         a.name as action_name
-      from profile_modules_cte pm
-      join profile_module_actions pma
-        on pma.profile_module_id = pm.profile_module_id
-      join actions a
-        on a.id = pma.action_id
-      where pm.total_access = false
-    )
-    select
-      pm.module_code,
-      pm.module_name,
-      pm.total_access,
-      coalesce(
-        json_agg(
-          json_build_object(
-            'code', pma.action_code,
-            'name', pma.action_name
-          )
-        ) filter (where pma.action_code is not null),
-        '[]'::json
-      ) as actions
-    from profile_modules_cte pm
-    left join profile_module_actions_cte pma
-      on pma.profile_code = pm.profile_code
-    and pma.module_code = pm.module_code
-    group by
-      pm.profile_id,
-      pm.profile_code,
-      pm.profile_name,
-      pm.module_code,
-      pm.module_name,
-      pm.total_access
-    order by
-      pm.module_code;`, [userId,profileId]);
-      
+      from
+        selected_user_profile sup
+      join user_permissions up on sup.user_id = up.user_id
+        and sup.profile_id = up.profile_id
+      join actions a on a.id = up.action_id
+      )
+      select
+        um.profile_code,
+        um.profile_name,
+        um.module_code,
+        um.module_name,
+        coalesce(
+          json_agg(
+            distinct json_build_object(
+              'code', upc.action_code,
+              'name', upc.action_name
+          )::text
+      ) filter ( where upc.action_code is not null),
+    '[]'::json
+      )::json as actions
+      from
+        user_modules_cte um
+      left join user_permissions_cte upc on upc.module_id = um.module_id
+      group by
+        um.profile_code,
+        um.profile_name,
+        um.module_id,
+        um.module_code,
+        um.module_name
+      order by
+        um.module_code;`, [userId, profileId]);
+
     return row.map(r => ({
-      module: r.module_code,
+      profileCode: r.profile_code,
+      profileName: r.profile_name,
+      moduleCode: r.module_code,
       moduleName: r.module_name,
-      totalAccess: r.total_access,
       actions: r.actions.map(a => ({ code: a.code, name: a.name })),
     }));
   }
