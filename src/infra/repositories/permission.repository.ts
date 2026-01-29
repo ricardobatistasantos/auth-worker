@@ -51,13 +51,13 @@ export class PermissionRepository {
         um.module_name,
         coalesce(
           json_agg(
-            distinct json_build_object(
+            DISTINCT jsonb_build_object(
               'code', upc.action_code,
               'name', upc.action_name
-          )::text
-      ) filter ( where upc.action_code is not null),
-    '[]'::json
-      )::json as actions
+            )
+          ) FILTER (WHERE upc.action_code IS NOT NULL),
+          '[]'::json
+        ) as actions
       from
         user_modules_cte um
       left join user_permissions_cte upc on upc.module_id = um.module_id
@@ -78,4 +78,5 @@ export class PermissionRepository {
       actions: r.actions.map(a => ({ code: a.code, name: a.name })),
     }));
   }
+  
 }
