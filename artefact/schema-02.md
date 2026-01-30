@@ -107,10 +107,10 @@ CREATE TABLE user_permissions (
 CREATE INDEX IF NOT EXISTS idx_user_profiles_user ON user_profiles(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_profiles_profile ON user_profiles(profile_id);
 
-CREATE INDEX IF NOT EXISTS idx_profile_modules_profile ON profile_modules(profile_id);
-CREATE INDEX IF NOT EXISTS idx_profile_modules_module ON profile_modules(module_id);
+CREATE INDEX IF NOT EXISTS idx_profile_modules_profile ON user_profile_modules(user_profile_id);
+CREATE INDEX IF NOT EXISTS idx_profile_modules_module ON user_profile_modules(module_id);
 
-CREATE INDEX IF NOT EXISTS idx_pma_profile_module ON profile_module_actions(profile_module_id);
+CREATE INDEX IF NOT EXISTS idx_pma_profile_module ON user_profile_module_actions(user_profile_module_id);
 
 CREATE INDEX IF NOT EXISTS idx_user_permissions_user ON user_permissions(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_permissions_module ON user_permissions(module_id);
@@ -254,6 +254,43 @@ JOIN actions a ON
         )
     )
 );
+
+insert
+	into
+	user_permissions (
+    user_id,
+	profile_id,
+	module_id,
+	action_id
+)
+select
+	up.user_id,
+	up.profile_id,
+	upm.module_id,
+	upma.action_id
+from
+	user_profiles up
+join user_profile_modules upm
+    on
+	upm.user_profile_id = up.id
+join user_profile_module_actions upma
+    on
+	upma.user_profile_module_id = upm.id
+left join user_permissions up_exists
+    on
+	up_exists.user_id = up.user_id
+	and up_exists.profile_id = up.profile_id
+	and up_exists.module_id = upm.module_id
+	and up_exists.action_id = upma.action_id
+where
+	up_exists.id is null;
+
+select
+	*
+from
+	user_permissions;
+
+----------------------------------------------------------
 
 with selected_user_profile as (
   select

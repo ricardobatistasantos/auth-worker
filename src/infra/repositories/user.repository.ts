@@ -15,17 +15,19 @@ export class UserRepository {
         u."name",
         u.email,
         u."password",
-        u.profile_id,
+        p.id profile_id,
         u.is_active,
         u.created_at,
         u.updated_at,
         p."name" name_profile,
         p.code code_profile,
-	      p.description
+              p.description
       from
         users u
+      inner join user_profiles up on
+        up.user_id = u.id
       inner join profile p on
-        p.id = u.profile_id
+        p.id = up.profile_id
       where
         u.email = $1
         and u.is_active is true;`, [email]);
@@ -56,20 +58,22 @@ export class UserRepository {
     },
   }> {
     const row = await this.connection().oneOrNone(`
-      SELECT
+      select
         u.name,
         u.email,
-        u.profile_id,
-        p.code  AS profile_code,
-        p.name  AS profile_name
-      FROM users u
-      JOIN profile p ON p.id = u.profile_id
-      WHERE u.id = $1
-        AND p.id = $2
-        AND u.is_active = true
-      `,
-      [userId, profileId],
-    );
+        p.id profile_id,
+        p.code as profile_code,
+        p.name as profile_name
+      from
+        users u
+      join user_profiles up on
+        u.id = up.user_id
+      join profile p on
+        p.id = up.profile_id
+      where
+        u.id = $1
+        and p.id = $2
+        and u.is_active = true`,[userId, profileId]);
 
     if (!row) return null;
 

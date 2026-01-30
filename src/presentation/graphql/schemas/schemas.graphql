@@ -24,9 +24,8 @@ type ActionDto {
 }
 
 type PermissionDto {
-  module: String!
+  moduleCode: String!
   moduleName: String!
-  totalAccess: Boolean!
   actions: [ActionDto!]!
 }
 

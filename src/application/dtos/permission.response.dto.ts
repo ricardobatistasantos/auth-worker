@@ -13,13 +13,10 @@ export class ActionDto {
 export class PermissionDto {
 
   @Field()
-  module: string;
+  moduleCode: string;
 
   @Field()
   moduleName: string;
-
-  @Field()
-  totalAccess: boolean;
 
   @Field(() => [ActionDto])
   actions: ActionDto[];
