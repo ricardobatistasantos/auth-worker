@@ -1,11 +1,11 @@
 export class Profile {
   id?: string;
 
-  code?: string
+  code?: string;
 
-  name?: string
+  name?: string;
 
-  description?: string
+  description?: string;
 
   constructor(input: Partial<Profile>) {
     this.id = input.id;

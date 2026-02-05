@@ -7,7 +7,8 @@ import { getConnection, ReplicType } from './connection';
     {
       provide: 'DATABASE_CONNECTION',
       useFactory: () => {
-        return (replic: ReplicType = ReplicType.MASTER) => getConnection(replic);
+        return (replic: ReplicType = ReplicType.MASTER) =>
+          getConnection(replic);
       },
     },
   ],

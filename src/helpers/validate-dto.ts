@@ -11,7 +11,7 @@ export async function validateDto(dtoClass: any, input: any) {
   });
 
   if (errors.length > 0) {
-    const details = errors.map(err => ({
+    const details = errors.map((err) => ({
       field: err.property,
       messages: err.constraints ? Object.values(err.constraints) : [],
     }));
@@ -20,6 +20,5 @@ export async function validateDto(dtoClass: any, input: any) {
       message: 'Erro de validação',
       details: details,
     });
-
   }
 }

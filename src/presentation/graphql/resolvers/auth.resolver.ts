@@ -8,19 +8,17 @@ import { PermissionUseCase } from '@application/use-cases/permission.use-case';
 
 @Resolver()
 export class AuthResolver {
-
   constructor(
     private readonly loginUseCase: LoginUseCase,
     private readonly permissionUseCase: PermissionUseCase,
-  ) { }
+  ) {}
 
   @Mutation(() => AuthDto)
   async login(
     @Args('email') email: string,
-    @Args('password') password: string
+    @Args('password') password: string,
   ) {
-    if (!email || !password)
-      throw new Error('Email and password are required');
+    if (!email || !password) throw new Error('Email and password are required');
     return this.loginUseCase.execute(email, password);
   }
 
@@ -30,5 +28,4 @@ export class AuthResolver {
     const { userId, profileId } = context.req.user;
     return this.permissionUseCase.execute(userId, profileId);
   }
-
 }

@@ -30,6 +30,6 @@ export function getConnection(replic: ReplicType = ReplicType.MASTER) {
     }
     return connections[replic];
   } catch (error) {
-    throw error
+    throw error;
   }
 }

@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class ActionDto {
@@ -11,7 +11,6 @@ export class ActionDto {
 
 @ObjectType()
 export class PermissionDto {
-
   @Field()
   moduleCode: string;
 

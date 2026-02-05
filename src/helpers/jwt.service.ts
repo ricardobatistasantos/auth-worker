@@ -1,8 +1,9 @@
+import { ITokenService } from '@application/contracts/jwt.service.interface';
 import { Injectable } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()
-export class JwtService {
+export class JwtService implements ITokenService {
   private readonly secret = process.env.JWT_SECRET || 'default_secret';
 
   generateToken(payload: any): string {
@@ -12,5 +13,4 @@ export class JwtService {
   verifyToken(token: string): any {
     return jwt.verify(token, this.secret);
   }
-  
 }

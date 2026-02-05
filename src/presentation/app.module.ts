@@ -1,20 +1,35 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from '@infra/database/pg-promise/config.module';
-import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { AuthResolver } from './graphql/resolvers/auth.resolver';
-import { UserRepository } from '@infra/repositories/user.repository';
-import { JwtService } from '@helpers/jwt.service';
-import { BcryptService } from '@helpers/bcrypt.service';
-import { LoginUseCase } from '@application/use-cases/login.use-case';
-import { join } from 'path';
 import { PermissionRepository } from '@infra/repositories/permission.repository';
 import { PermissionUseCase } from '@application/use-cases/permission.use-case';
+import { DatabaseModule } from '@infra/database/pg-promise/config.module';
+import { UserRepository } from '@infra/repositories/user.repository';
+import { LoginUseCase } from '@application/use-cases/login.use-case';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { AuthResolver } from './graphql/resolvers/auth.resolver';
+import { BcryptService } from '@helpers/bcrypt.service';
+import { JwtService } from '@helpers/jwt.service';
+import { GraphQLModule } from '@nestjs/graphql';
+import { join } from 'path';
 
-const resolvers = [AuthResolver,];
-const userCases = [LoginUseCase, PermissionUseCase,];
-const repositories = [UserRepository,PermissionRepository];
-const services = [JwtService, BcryptService,];
+const resolvers = [AuthResolver];
+const userCases = [LoginUseCase, PermissionUseCase];
+const repositories = [
+  {
+    provide: 'IUserRepository',
+    useClass: UserRepository,
+  },
+  {
+    provide: 'IPermissionRepository',
+    useClass: PermissionRepository,
+  },
+];
+const services = [
+  {
+    provide: 'ITokenService',
+    useClass: JwtService,
+  },
+  BcryptService,
+];
 
 @Module({
   imports: [
@@ -23,16 +38,11 @@ const services = [JwtService, BcryptService,];
       driver: ApolloDriver,
       autoSchemaFile: join(
         process.cwd(),
-        'src/presentation/graphql/schemas/schemas.graphql'
+        'src/presentation/graphql/schemas/schemas.graphql',
       ),
       playground: true,
     }),
   ],
-  providers: [
-    ...resolvers,
-    ...userCases,
-    ...repositories,
-    ...services,
-  ]
+  providers: [...resolvers, ...userCases, ...repositories, ...services],
 })
-export class AppModule { }
+export class AppModule {}

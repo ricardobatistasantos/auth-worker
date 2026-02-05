@@ -3,7 +3,6 @@ import { ProfileDto } from './profile.dto';
 
 @ObjectType()
 export class User {
-
   @Field()
   name: string;
 

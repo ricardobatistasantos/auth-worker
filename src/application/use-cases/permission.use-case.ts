@@ -1,13 +1,15 @@
-import { Injectable } from "@nestjs/common";
-import { PermissionRepository } from "@infra/repositories/permission.repository";
-import { UserRepository } from "@infra/repositories/user.repository";
+import { Inject, Injectable } from '@nestjs/common';
+import { IUserRepository } from '@domain/repositories/user.repository';
+import { IPermissionRepository } from '@domain/repositories/permission.repository';
 
 @Injectable()
 export class PermissionUseCase {
   constructor(
-    private readonly userRepository: UserRepository,
-    private readonly permissionRepository: PermissionRepository,
-  ) { }
+    @Inject('IUserRepository')
+    private readonly userRepository: IUserRepository,
+    @Inject('IPermissionRepository')
+    private readonly permissionRepository: IPermissionRepository,
+  ) {}
 
   async execute(userId: string, profileId: string) {
     const user = await this.userRepository.findById(userId, profileId);

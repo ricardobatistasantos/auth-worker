@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { User } from '@domain/entities/user.entity';
 import { Profile } from '@domain/entities/profile.entity';
+import { IUserRepository } from '@domain/repositories/user.repository';
 
 @Injectable()
-export class UserRepository {
+export class UserRepository implements IUserRepository {
+  constructor(@Inject('DATABASE_CONNECTION') private readonly connection) {}
 
-
-  constructor(@Inject('DATABASE_CONNECTION') private readonly connection) { }
-
-  async findByEmail(email: string): Promise<User | null> {
-    const user = await this.connection().oneOrNone(`
+  async findByEmail(email: string) {
+    const user = await this.connection().oneOrNone(
+      `
       select
         u.id,
         u."name",
@@ -30,34 +30,31 @@ export class UserRepository {
         p.id = up.profile_id
       where
         u.email = $1
-        and u.is_active is true;`, [email]);
-        
-    return user ? new User({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      profile: new Profile({
-        id: user.profile_id,
-        code: user.code_profile,
-        name: user.name_profile,
-        description: user.description,
-      }),
-      password: user.password,
-      createdAt: user.created_at,
-      updatedAt: user.updated_at,
-    }) : null;
+        and u.is_active is true;`,
+      [email],
+    );
+
+    return user
+      ? new User({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          profile: new Profile({
+            id: user.profile_id,
+            code: user.code_profile,
+            name: user.name_profile,
+            description: user.description,
+          }),
+          password: user.password,
+          createdAt: user.created_at,
+          updatedAt: user.updated_at,
+        })
+      : null;
   }
 
-  async findById(userId: string, profileId: string): Promise<{
-    name: string,
-    email: string,
-    profileId: string,
-    profile: {
-      code: string,
-      name: string,
-    },
-  }> {
-    const row = await this.connection().oneOrNone(`
+  async findById(userId: string, profileId: string) {
+    const row = await this.connection().oneOrNone(
+      `
       select
         u.name,
         u.email,
@@ -73,7 +70,9 @@ export class UserRepository {
       where
         u.id = $1
         and p.id = $2
-        and u.is_active = true`,[userId, profileId]);
+        and u.is_active = true`,
+      [userId, profileId],
+    );
 
     if (!row) return null;
 
@@ -87,5 +86,4 @@ export class UserRepository {
       },
     };
   }
-
 }

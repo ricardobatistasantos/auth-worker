@@ -1,10 +1,19 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { JwtService } from '@helpers/jwt.service';
+import { ITokenService } from '@application/contracts/jwt.service.interface';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    @Inject('ITokenService')
+    private readonly jwtService: ITokenService,
+  ) {}
 
   canActivate(context: ExecutionContext): boolean {
     const ctx = GqlExecutionContext.create(context);
@@ -15,8 +24,8 @@ export class JwtAuthGuard implements CanActivate {
       throw new UnauthorizedException('Token not provided');
     }
     try {
-      const { user } = this.jwtService.verifyToken(token)
-      req.user = user
+      const { user } = this.jwtService.verifyToken(token);
+      req.user = user;
       return true;
     } catch {
       throw new UnauthorizedException('Invalid or expired token');
