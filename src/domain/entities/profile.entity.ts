@@ -5,12 +5,9 @@ export class Profile {
 
   name?: string;
 
-  description?: string;
-
   constructor(input: Partial<Profile>) {
     this.id = input.id;
     this.name = input.name;
     this.code = input.code;
-    this.description = input.description;
   }
 }

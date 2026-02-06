@@ -9,8 +9,7 @@ export class UserRepository implements IUserRepository {
 
   async findByEmail(email: string) {
     const user = await this.connection().oneOrNone(
-      `
-      select
+      `select
         u.id,
         u."name",
         u.email,
@@ -34,28 +33,24 @@ export class UserRepository implements IUserRepository {
       [email],
     );
 
-    return user
-      ? new User({
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          profile: new Profile({
-            id: user.profile_id,
-            code: user.code_profile,
-            name: user.name_profile,
-            description: user.description,
-          }),
-          password: user.password,
-          createdAt: user.created_at,
-          updatedAt: user.updated_at,
-        })
-      : null;
+    if (!user) return null;
+
+    return new User({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      profile: new Profile({
+        id: user.profile_id,
+        code: user.code_profile,
+        name: user.name_profile,
+      }),
+      password: user.password,
+    });
   }
 
   async findById(userId: string, profileId: string) {
     const row = await this.connection().oneOrNone(
-      `
-      select
+      `select
         u.name,
         u.email,
         p.id profile_id,
@@ -76,14 +71,14 @@ export class UserRepository implements IUserRepository {
 
     if (!row) return null;
 
-    return {
+    return new User({
       name: row.name,
       email: row.email,
-      profileId: row.profile_id,
-      profile: {
+      profile: new Profile({
+        id: row.profile_id,
         code: row.profile_code,
         name: row.profile_name,
-      },
-    };
+      }),
+    });
   }
 }

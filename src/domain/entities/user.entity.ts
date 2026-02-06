@@ -8,9 +8,9 @@ export class User extends Entity {
 
   password?: string;
 
-  profile?: Profile;
+  profile: Profile;
 
-  constructor(input: Partial<User>) {
+  constructor(input: User) {
     super(input);
 
     this.name = input.name;
@@ -20,7 +20,6 @@ export class User extends Entity {
       id: input.profile?.id,
       code: input.profile.code,
       name: input.profile.name,
-      description: input.profile.description,
     });
   }
 }

@@ -5,7 +5,7 @@ export class Entity {
 
   updatedAt?: Date;
 
-  constructor(input: Partial<Entity>) {
+  constructor(input: Entity) {
     this.id = input.id;
     this.createdAt = input.createdAt;
     this.updatedAt = input.updatedAt;

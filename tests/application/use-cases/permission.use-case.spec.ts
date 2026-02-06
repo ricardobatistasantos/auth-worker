@@ -1,6 +1,8 @@
 import { PermissionUseCase } from '@application/use-cases/permission.use-case';
 import { permissionRepositoryMock } from '../../domain/repository/permission.repository.mock';
 import { userRepositoryMock } from '../../domain/repository/user.repository.mock';
+import { Profile } from '@domain/entities/profile.entity';
+import { User } from '@domain/entities/user.entity';
 
 describe('PermissionUseCase', () => {
   const permissionRepo = permissionRepositoryMock();
@@ -8,28 +10,49 @@ describe('PermissionUseCase', () => {
 
   const useCase = new PermissionUseCase(userRepo, permissionRepo);
 
+  const userId = '019c3087-13b2-7b1d-9f54-1d9860c7bd90';
+  const profileId = '019c3087-13b2-76d5-9996-11e04cbab655';
+
+  const user = new User({
+    id: userId,
+    name: 'Ricardo Santos',
+    email: 'teste@teste.com',
+    profile: new Profile({
+      id: profileId,
+      code: 'admin',
+      name: 'Admin',
+    }),
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('should return permissions when user exists', async () => {
-    const userId = 'user-1';
-    const profileId = 'profile-1';
-
     const fakePermissions = [
-      { id: 'perm-1', code: 'USER_CREATE' },
-      { id: 'perm-2', code: 'USER_DELETE' },
+      {
+        code: 'FIN',
+        name: 'Financeiro',
+        actions: [
+          {
+            code: 'CREATE',
+            name: 'Criar',
+          },
+        ],
+      },
+      {
+        code: 'HR',
+        name: 'Recursos Humanos',
+        actions: [
+          {
+            code: 'UPDATE',
+            name: 'Atualizar',
+          },
+        ],
+      },
     ];
 
-    userRepo.findById.mockResolvedValue({
-      name: 'string',
-      email: 'string',
-      profileId: 'string',
-      profile: {
-        code: 'string',
-        name: 'string',
-      },
-    });
+    userRepo.findById.mockResolvedValue(user);
     permissionRepo.getPermissions.mockResolvedValue(fakePermissions);
 
     const result = await useCase.execute(userId, profileId);
@@ -47,9 +70,6 @@ describe('PermissionUseCase', () => {
   });
 
   it('should throw error if user not found', async () => {
-    const userId = 'user-1';
-    const profileId = 'profile-1';
-
     userRepo.findById.mockResolvedValue(null);
 
     await expect(useCase.execute(userId, profileId)).rejects.toThrow(

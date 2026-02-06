@@ -12,10 +12,10 @@ export class ActionDto {
 @ObjectType()
 export class PermissionDto {
   @Field()
-  moduleCode: string;
+  code: string;
 
   @Field()
-  moduleName: string;
+  name: string;
 
   @Field(() => [ActionDto])
   actions: ActionDto[];

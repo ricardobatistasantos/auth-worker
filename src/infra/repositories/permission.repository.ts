@@ -1,5 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { IPermissionRepository } from '@domain/repositories/permission.repository';
+import { Module } from '@domain/entities/module.entity';
+import { Action } from '@domain/entities/action.entity';
 
 @Injectable()
 export class PermissionRepository implements IPermissionRepository {
@@ -7,8 +9,7 @@ export class PermissionRepository implements IPermissionRepository {
 
   async getPermissions(userId: string, profileId: string) {
     const row = await this.connection().manyOrNone(
-      `
-      with selected_user_profile as (
+      `with selected_user_profile as (
       select
         up.id as user_profile_id,
         up.user_id,
@@ -73,12 +74,19 @@ export class PermissionRepository implements IPermissionRepository {
       [userId, profileId],
     );
 
-    return row.map((r) => ({
-      profileCode: r.profile_code,
-      profileName: r.profile_name,
-      moduleCode: r.module_code,
-      moduleName: r.module_name,
-      actions: r.actions.map((a) => ({ code: a.code, name: a.name })),
-    }));
+    return row.map(
+      (r) =>
+        new Module({
+          code: r.module_code,
+          name: r.module_name,
+          actions: r.actions.map(
+            (a) =>
+              new Action({
+                code: a.code,
+                name: a.name,
+              }),
+          ),
+        }),
+    );
   }
 }

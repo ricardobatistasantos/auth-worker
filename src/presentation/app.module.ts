@@ -7,7 +7,7 @@ import { LoginUseCase } from '@application/use-cases/login.use-case';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AuthResolver } from './graphql/resolvers/auth.resolver';
 import { BcryptService } from '@helpers/bcrypt.service';
-import { JwtService } from '@helpers/jwt.service';
+import { JwtService } from '@infra/token-service/jwt.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 
