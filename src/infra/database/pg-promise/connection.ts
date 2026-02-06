@@ -1,10 +1,11 @@
 import pgPromise from 'pg-promise';
+import * as monitor from 'pg-monitor';
 
-const pgp = pgPromise();
+export const initOptions = {};
+const pgp = pgPromise(initOptions);
 
 export enum ReplicType {
   MASTER = 'master',
-  SLAVE = 'slave',
 }
 
 const replics = {
@@ -20,8 +21,10 @@ const replics = {
 
 const connections = {
   [ReplicType.MASTER]: <pgPromise.IMain>null,
-  [ReplicType.SLAVE]: <pgPromise.IMain>null,
 };
+
+monitor.attach(initOptions);
+monitor.setTheme('matrix');
 
 export function getConnection(replic: ReplicType = ReplicType.MASTER) {
   try {

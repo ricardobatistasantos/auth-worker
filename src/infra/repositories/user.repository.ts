@@ -15,12 +15,8 @@ export class UserRepository implements IUserRepository {
         u.email,
         u."password",
         p.id profile_id,
-        u.is_active,
-        u.created_at,
-        u.updated_at,
         p."name" name_profile,
-        p.code code_profile,
-              p.description
+        p.code code_profile
       from
         users u
       inner join user_profiles up on
@@ -39,12 +35,12 @@ export class UserRepository implements IUserRepository {
       id: user.id,
       name: user.name,
       email: user.email,
+      password: user.password,
       profile: new Profile({
         id: user.profile_id,
         code: user.code_profile,
         name: user.name_profile,
       }),
-      password: user.password,
     });
   }
 

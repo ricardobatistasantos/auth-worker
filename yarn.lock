@@ -4804,6 +4804,13 @@ pg-minify@1.6.5:
   resolved "https://registry.yarnpkg.com/pg-minify/-/pg-minify-1.6.5.tgz#c6a2e23489f28c2944119f559fb4081dfdd347a9"
   integrity sha512-u0UE8veaCnMfJmoklqneeBBopOAPG3/6DHqGVHYAhz8DkJXh9dnjPlz25fRxn4e+6XVzdOp7kau63Rp52fZ3WQ==
 
+pg-monitor@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/pg-monitor/-/pg-monitor-3.1.0.tgz#7913428535e74bfa3ce9d6f7e123e411f014dada"
+  integrity sha512-giK0h52AOO/v8iu6hZCdZ/X9W8oAM9Dm1VReQQtki532X8g4z1LVIm4Z/3cGvDcETWW+Ty0FrtU8iTrGFYIZfA==
+  dependencies:
+    picocolors "1.1.1"
+
 pg-pool@^3.7.0:
   version "3.7.1"
   resolved "https://registry.yarnpkg.com/pg-pool/-/pg-pool-3.7.1.tgz#d1aaf618618d8f878acf185e86084928b8cd5b3c"
@@ -4855,7 +4862,7 @@ pgpass@1.x:
   dependencies:
     split2 "^4.1.0"
 
-picocolors@^1.0.0, picocolors@^1.1.1:
+picocolors@1.1.1, picocolors@^1.0.0, picocolors@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/picocolors/-/picocolors-1.1.1.tgz#3d321af3eab939b083c8f929a1d12cda81c26b6b"
   integrity sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==

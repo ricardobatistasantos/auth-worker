@@ -5,18 +5,11 @@ export class Module {
 
   code: string;
 
-  actions: Action[];
+  actions?: Action[];
 
   constructor(input: Partial<Module>) {
     this.name = input.name;
     this.code = input.code;
-    this.actions =
-      input.actions?.map(
-        (action) =>
-          new Action({
-            name: action.name,
-            code: action.code,
-          }),
-      ) || [];
+    this.actions = input.actions || [];
   }
 }

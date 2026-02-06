@@ -1,10 +1,10 @@
 import { UseGuards } from '@nestjs/common';
-import { Resolver, Mutation, Args, Query, Context } from '@nestjs/graphql';
+import { PermissionUseCase } from '@application/use-cases/permission.use-case';
+import { PermissionDto } from '@application/dtos/permission.response.dto';
 import { JwtAuthGuard } from '@presentation/shared/guards/jwt-auth-guard';
 import { LoginUseCase } from '@application/use-cases/login.use-case';
+import { Resolver, Args, Query, Context } from '@nestjs/graphql';
 import { AuthDto } from '@application/dtos/auth.response.dto';
-import { PermissionDto } from '@application/dtos/permission.response.dto';
-import { PermissionUseCase } from '@application/use-cases/permission.use-case';
 
 @Resolver()
 export class AuthResolver {
@@ -13,7 +13,7 @@ export class AuthResolver {
     private readonly permissionUseCase: PermissionUseCase,
   ) {}
 
-  @Mutation(() => AuthDto)
+  @Query(() => AuthDto)
   async login(
     @Args('email') email: string,
     @Args('password') password: string,
@@ -26,7 +26,8 @@ export class AuthResolver {
   @UseGuards(JwtAuthGuard)
   async myPermissions(@Context() context: any) {
     const { userId, profileId } = context.req.user;
-    if (!userId || !profileId) throw new Error('userId and profileId are required');
+    if (!userId || !profileId)
+      throw new Error('userId and profileId are required');
     return this.permissionUseCase.execute(userId, profileId);
   }
 }
