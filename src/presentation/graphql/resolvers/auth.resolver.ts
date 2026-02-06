@@ -26,6 +26,7 @@ export class AuthResolver {
   @UseGuards(JwtAuthGuard)
   async myPermissions(@Context() context: any) {
     const { userId, profileId } = context.req.user;
+    if (!userId || !profileId) throw new Error('userId and profileId are required');
     return this.permissionUseCase.execute(userId, profileId);
   }
 }

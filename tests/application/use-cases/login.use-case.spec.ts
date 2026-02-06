@@ -2,8 +2,8 @@ import { LoginUseCase } from '@application/use-cases/login.use-case';
 import { userRepositoryMock } from '../../domain/repository/user.repository.mock';
 import { bcryptServiceMock } from '../../helpers/bcrypt.service.mock';
 import { jwtServiceMock } from '../../token-service/jwt.service.mock';
-import { User } from '@domain/entities/user.entity';
 import { Profile } from '@domain/entities/profile.entity';
+import { User } from '@domain/entities/user.entity';
 
 describe('LoginUseCase', () => {
   const userRepo = userRepositoryMock();

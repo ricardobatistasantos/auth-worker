@@ -29,7 +29,6 @@ CREATE TABLE IF NOT EXISTS profile (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   code varchar(100) NOT NULL UNIQUE,
   name varchar(200) NOT NULL,
-  description text,
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
@@ -51,7 +50,6 @@ CREATE TABLE IF NOT EXISTS modules (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   code varchar(80) NOT NULL UNIQUE,
   name varchar(200) NOT NULL,
-  description text,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
@@ -63,7 +61,6 @@ CREATE TABLE IF NOT EXISTS actions (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   code varchar(120) NOT NULL UNIQUE, -- ex: FIN_CREATE_INVOICE
   name varchar(200) NOT NULL,
-  description text,
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
@@ -196,7 +193,7 @@ FROM user_profiles up
 JOIN profile p ON p.id = up.profile_id
 JOIN modules m ON
 (
-    -- ADMIN → tudo
+    -- admin
     (p.code = 'ADMIN')
     -- Financeiro
     OR (p.code = 'FIN' AND m.code IN ('FIN','REPORTS'))
@@ -231,7 +228,7 @@ JOIN actions a ON
         )
         AND p.code = 'ADMIN'
     )
-    -- Visitante e Auditor → somente leitura
+    -- Visitante e Auditor: somente leitura
     OR (
         a.code = 'READ'
         AND EXISTS (
@@ -242,7 +239,7 @@ JOIN actions a ON
             AND p.code IN ('VIEW','AUD')
         )
     )
-    -- Demais perfis → CRUD completo
+    -- Demais perfis
     OR (
         a.code IN ('CREATE','READ','UPDATE','DELETE')
         AND EXISTS (
@@ -289,81 +286,4 @@ select
 	*
 from
 	user_permissions;
-
-----------------------------------------------------------
-
-with selected_user_profile as (
-  select
-    up.id as user_profile_id,
-    up.user_id,
-    p.id as profile_id,
-    p.code as profile_code,
-    p.name as profile_name
-  from
-    user_profiles up
-  join profile p on
-    p.id = up.profile_id
-  where
-    up.user_id = $1
-    and p.id = $2
-  ),
-  user_modules_cte as (
-  select
-    sup.profile_code,
-    sup.profile_name,
-    upm.id as user_profile_module_id,
-    upm.module_id,
-    m.code as module_code,
-    m.name as module_name
-  from
-    user_profile_modules upm
-  join selected_user_profile sup on
-    sup.user_profile_id = upm.user_profile_id
-  join modules m on
-    m.id = upm.module_id
-  ),
-  user_permissions_cte as (
-  select
-    up.module_id,
-    a.id as action_id,
-    a.code as action_code,
-    a.name as action_name
-  from
-    selected_user_profile sup
-  join user_permissions up on
-    sup.user_id = up.user_id
-    and sup.profile_id = up.profile_id
-  join actions a on
-    a.id = up.action_id
-  )
-  select
-    um.profile_code,
-    um.profile_name,
-    um.module_code,
-    um.module_name,
-    coalesce(
-      json_agg(
-          distinct json_build_object(
-              'code',
-    upc.action_code,
-    'name',
-    upc.action_name
-          )::text
-      ) filter (
-  where
-    upc.action_code is not null),
-    '[]'::json
-  )::json as actions
-  from
-    user_modules_cte um
-  left join user_permissions_cte upc on
-    upc.module_id = um.module_id
-  group by
-    um.profile_code,
-    um.profile_name,
-    um.module_id,
-    um.module_code,
-    um.module_name
-  order by
-    um.module_code;
 ```

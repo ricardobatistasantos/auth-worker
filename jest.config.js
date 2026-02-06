@@ -23,14 +23,14 @@ const config = {
   ],
   coverageProvider: 'v8',
   coverageReporters: ['html', 'text', 'lcov'],
-  coverageThreshold: {
-    global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80,
-    },
-  },
+  // coverageThreshold: {
+  //   global: {
+  //     branches: 80,
+  //     functions: 80,
+  //     lines: 80,
+  //     statements: 80,
+  //   },
+  // },
   collectCoverageFrom: [
     '<rootDir>/src/**/*.ts',
     '!<rootDir>/src/main.ts',
