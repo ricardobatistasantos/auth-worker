@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS user_profile_module_actions (
 -- USER PERMISSION OVERRIDE
 -- =========================================================
 
-CREATE TABLE user_permissions (
+CREATE TABLE IF NOT EXISTS user_permissions (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   profile_id uuid NOT NULL REFERENCES profile(id) ON DELETE CASCADE,
@@ -281,9 +281,4 @@ left join user_permissions up_exists
 	and up_exists.action_id = upma.action_id
 where
 	up_exists.id is null;
-
-select
-	*
-from
-	user_permissions;
 ```
